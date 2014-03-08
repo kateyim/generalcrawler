@@ -148,6 +148,13 @@
 										</includes>
 										<filtering>true</filtering>
 									</resource>
+									<resource>
+										<directory>lib/</directory>
+										<targetPath>src/main/resources/lib</targetPath>
+										<includes>
+											<include>**/*.jar</include>
+										</includes>
+									</resource>
 								</resources>
 							</configuration>
 						</execution>
