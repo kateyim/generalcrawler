@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="GB2312" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+	<!--STDOUT log -->
+	<appender name="Stdout" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{ABSOLUTE} %5p %c{1}:%L - %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="DEBUG" />
+			<param name="LevelMax" value="ERROR" />
+		</filter>
+	</appender>
+	<!--Release log -->
+	<appender name="Release" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="../crawlerlog/info.log" />
+		<param name="Append" value="false" />
+		<param name="MaxFileSize" value="10000KB" />
+		<param name="MaxBackupIndex" value="50" />
+		<param name="Threshold" value="INFO" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%p (%c:%L)- %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="INFO" />
+			<param name="LevelMax" value="ERROR" />
+			<param name="AcceptOnMatch" value="true" />
+		</filter>
+	</appender>
+	<!--Error log -->
+	<appender name="Error" class="org.apache.log4j.RollingFileAppender">
+		<param name="Append" value="false" />
+		<param name="File" value="../crawlerlog/error.log" />
+		<param name="MaxFileSize" value="1000KB" />
+		<param name="MaxBackupIndex" value="50" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d [%t] %p - %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="ERROR" />
+			<param name="LevelMax" value="ERROR" />
+			<param name="AcceptOnMatch" value="true" />
+		</filter>
+	</appender>
+	<!--Debug log -->
+	<appender name="Debug" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="../crawlerlog/debug.log" />
+		<param name="Append" value="false" />
+		<param name="MaxFileSize" value="10000KB" />
+		<param name="MaxBackupIndex" value="2000" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%p (%c:%L)- %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="Debug" />
+			<param name="LevelMax" value="WARN" />
+			<param name="AcceptOnMatch" value="true" />
+		</filter>
+	</appender>
+	<root>
+		<priority value="DEBUG" />
+		<appender-ref ref="Stdout" />
+		<appender-ref ref="Error" />
+		<appender-ref ref="Release" />
+		<appender-ref ref="Debug" />
+	</root>
+</log4j:configuration>

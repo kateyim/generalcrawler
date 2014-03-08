@@ -1,0 +1,24 @@
+DE support files
+/.classpath
+/.launch
+/.project
+/.settings
+/*.launch
+/*.tmproj
+/eclipse
+
+# Yahoo! appid file
+#*crawler.properties
+
+# test files
+#/src/test
+
+# reports files
+/reports
+
+# logs
+
+#"temporary" build files
+/target
+
+# other
