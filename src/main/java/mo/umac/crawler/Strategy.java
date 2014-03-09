@@ -1,6 +1,11 @@
 package mo.umac.crawler;
 
+import java.util.Iterator;
+import java.util.Map.Entry;
+
 import org.apache.log4j.Logger;
+
+import edu.wlu.cs.levy.CG.KeySizeException;
 
 public abstract class Strategy {
 
@@ -21,23 +26,49 @@ public abstract class Strategy {
 		DSpace dSpace = prepareData();
 		crawl(dSpace);
 
+		// for debugging
+		checkUncrawledPoints();
+
 		// After crawling:
-		logger.info("removing duplicate records in the external db");
-		dbExternal.removeDuplicate();
-		logger.info("begin updating the external db");
-		dbInMemory.updataExternalDB();
-		logger.info("end updating the external db");
+		// logger.info("removing duplicate records in the external db");
+		// dbExternal.removeDuplicate();
+		// logger.info("begin updating the external db");
+		// dbInMemory.updataExternalDB();
+		// logger.info("end updating the external db");
 		//
 		endData();
 		/**************************************************************************/
 		long after = System.currentTimeMillis();
 		logger.info("Stop at: " + after);
-		logger.info("time for crawling = " + (after - before) / 1000);
+		logger.info("time for crawling = " + (after - before) / 1000 + "s");
 		//
 		logger.info("countNumQueries = " + countNumQueries);
 		logger.info("number of points crawled = " + dbInMemory.poisIDs.size());
 		logger.info(Memory.poisCrawledTimes.toString());
 		logger.info("Finished ! Oh ! Yeah! ");
+	}
+
+	private void checkUncrawledPoints() {
+		logger.info("checking not crawled points");
+		Iterator it = Memory.pois.entrySet().iterator();
+		while (it.hasNext()) {
+			Entry entry = (Entry) it.next();
+			int key = (Integer) entry.getKey();
+			if (!Memory.poisIDs.contains(key)) {
+				logger.info(key + ": " + Memory.pois.get(key).toString());
+				double[] newKey = new double[Main.DIMENSION+1];
+				for(int i = 0; i < Main.DIMENSION; i++ ){
+					newKey[i] = Memory.pois.get(key).getValueOfADimension(i);
+				}
+				newKey[Main.DIMENSION] = key * Memory.EPSILON;
+				try {
+					int id = (Integer)Memory.kdtree.search(newKey);
+					logger.info("in kdtree: " + id + ": " + Utils.ArrayToString(newKey));
+				} catch (KeySizeException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	protected abstract void crawl(DSpace dSpace);
@@ -47,12 +78,14 @@ public abstract class Strategy {
 		dbExternal = new H2DB(Main.DB_NAME_SOURCE, Main.DB_NAME_TARGET);
 		//
 		dbInMemory = new Memory();
-		// read point from external h2db, update the lowerbounds and the upper bounds
+		// read point from external h2db, update the lowerbounds and the upper
+		// bounds
 		dbInMemory.readFromExtenalDB();
 		// expandBoundary();
 		// dbInMemory.poisCrawledTimes = new HashMap<Integer, Integer>();
 		dbInMemory.index();
 		logger.info("There are in total " + dbInMemory.pois.size() + " points.");
+		logger.info("There are in total " + Memory.kdtree.size() + " points in the KD tree");
 		// target database
 		dbExternal.createTables(Main.DB_NAME_TARGET);
 
@@ -70,8 +103,7 @@ public abstract class Strategy {
 
 	/*
 	 * (non-Javadoc)
-	 * @see mo.umac.crawler.YahooLocalCrawlerStrategy#endData()
-	 * shut down the connection
+	 * @see mo.umac.crawler.YahooLocalCrawlerStrategy#endData() shut down the connection
 	 */
 	private static void endData() {
 		H2DB.distroyConn();

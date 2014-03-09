@@ -26,21 +26,29 @@ import edu.wlu.cs.levy.CG.KeySizeException;
 
 public class KDTreeTest {
 
-	// String pointFile = "../crawler-data/glass-data/test-2d/points.txt";
-	// String testSource = "../crawler-data/glass-data/test-2d/source";
-	// String testTarget = "";
-	// int dimension = 2;
-	// int n = 100;
-	// int k = 40;
-	// double[] v = { 10, 10 };
-
-	String pointFile = "../crawler-data/glass-data/test-4d/points.txt";
-	String testSource = "../crawler-data/glass-data/test-4d/source";
+	String pointFile = "../crawler-data/glass-data/test-2d/points.txt";
+	String testSource = "../crawler-data/glass-data/test-2d/source";
 	String testTarget = "";
-	int dimension = 4;
-	int n = 100;
+	int dimension = 2;
+	int n = 50;
 	int k = 5;
-	double[] v = { 52, 29.5, 16.5, 135 };
+	double[] v = { 10, 10 };
+
+	// String pointFile = "../crawler-data/glass-data/test-3d/points.txt";
+	// String testSource = "../crawler-data/glass-data/test-3d/source";
+	// String testTarget = "";
+	// int dimension = 3;
+	// int n = 100;
+	// int k = 5;
+	// double[] v = { 52, 29.5, 16.5 };
+
+	// String pointFile = "../crawler-data/glass-data/test-4d/points.txt";
+	// String testSource = "../crawler-data/glass-data/test-4d/source";
+	// String testTarget = "";
+	// int dimension = 4;
+	// int n = 100;
+	// int k = 5;
+	// double[] v = { 52, 29.5, 16.5, 135 };
 
 	// String pointFile = Main.DB_NAME_FILE;
 	// String testSource = Main.DB_NAME_SOURCE;
@@ -55,10 +63,10 @@ public class KDTreeTest {
 		DOMConfigurator.configure("src/main/resources/log4j.xml");
 
 		KDTreeTest test = new KDTreeTest();
-		// test.init();
+		test.init();
 
 		// test 1
-		test.testKNNQuery();
+		// test.testKNNQuery();
 		H2DB.distroyConn();
 	}
 
@@ -139,7 +147,8 @@ public class KDTreeTest {
 		Random random = new Random(System.currentTimeMillis());
 		for (int i = 0; i < numPoint; i++) {
 			for (int j = 0; j < dimension; j++) {
-				v[j] = random.nextDouble() * 100;
+				// v[j] = random.nextDouble() * 100;
+				v[j] = random.nextInt() % 10;
 			}
 
 			Point Point = new Point(dimension, v);
@@ -150,8 +159,7 @@ public class KDTreeTest {
 
 	public void exportDataToFile(String fileName, HashMap<Integer, Point> points) {
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
-					fileName)));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(fileName)));
 
 			Iterator it = points.entrySet().iterator();
 			while (it.hasNext()) {

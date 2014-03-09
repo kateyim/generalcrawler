@@ -47,6 +47,8 @@ public class Memory {
 
 	public static KDTree kdtree;
 
+	public static final double EPSILON = 0.00000001;
+
 	public Memory() {
 		// this.dbNameSource = MainCrawlerDn.DB_NAME_SOURCE;
 
@@ -62,11 +64,35 @@ public class Memory {
 	}
 
 	public void index() {
+		kdtree = new KDTree<Integer>(Main.DIMENSION + 1);
+		Iterator it = pois.entrySet().iterator();
+		while (it.hasNext()) {
+			Entry entry = (Entry) it.next();
+			Integer id = (Integer) entry.getKey();
+			Point p = (Point) entry.getValue();
+			// double[] v = p.v;
+			double[] v = new double[Main.DIMENSION + 1];
+			for (int i = 0; i < p.v.length; i++) {
+				v[i] = p.getValueOfADimension(i);
+				v[Main.DIMENSION] = id * EPSILON ;
+			}
+			try {
+				kdtree.insert(v, id);
+			} catch (KeySizeException e) {
+				e.printStackTrace();
+			} catch (KeyDuplicateException e) {
+				logger.error(e.toString());
+				// e.printStackTrace();
+			}
+		}
+	}
+
+	public void indexWithoutDuplicateKey() {
 		kdtree = new KDTree<Integer>(Main.DIMENSION);
 
 		Iterator it = pois.entrySet().iterator();
-		while(it.hasNext()){
-			Entry entry = (Entry)it.next();
+		while (it.hasNext()) {
+			Entry entry = (Entry) it.next();
 			Integer id = (Integer) entry.getKey();
 			Point p = (Point) entry.getValue();
 			double[] v = p.v;
@@ -75,14 +101,14 @@ public class Memory {
 			} catch (KeySizeException e) {
 				e.printStackTrace();
 			} catch (KeyDuplicateException e) {
-				e.printStackTrace();
+				logger.error(e.toString());
+				// e.printStackTrace();
 			}
 		}
 	}
 
 	/**
-	 * compute the number of dimensions and the boundaries in the DSpace
-	 * structure
+	 * compute the number of dimensions and the boundaries in the DSpace structure
 	 * 
 	 * @return
 	 */
@@ -93,6 +119,7 @@ public class Memory {
 
 	public List<Integer> query(Point queryPoint) {
 		List<Integer> resultsID = searchNN(queryPoint, Main.TOP_K);
+
 		for (int i = 0; i < resultsID.size(); i++) {
 			int id = resultsID.get(i);
 			int times = 0;
@@ -109,29 +136,53 @@ public class Memory {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("query = " + Utils.ArrayToString(queryPoint.v));
-			// if (Strategy.countNumQueries % 20 == 0) {
-			logger.debug("countNumQueries = " + Strategy.countNumQueries);
-			logger.debug("countCrawledPoints = " + poisCrawledTimes.size());
-			logger.debug("crawled points + crawed times: " + poisCrawledTimes.toString());
-			// }
+
+			logger.debug("answers = ");
+			for (int i = 0; i < resultsID.size(); i++) {
+				int id = resultsID.get(i);
+				if (logger.isDebugEnabled()) {
+					logger.debug(id + ":" + pois.get(id).toString());
+				}
+			}
+
+			if (Strategy.countNumQueries % 100 == 0) {
+				logger.info("countNumQueries = " + Strategy.countNumQueries);
+				logger.info("countCrawledPoints = " + poisCrawledTimes.size());
+				logger.info("crawled points + crawed times: " + poisCrawledTimes.toString());
+			}
 		}
 		return resultsID;
 	}
 
 	/**
-	 * read point from external h2db, update the lowerbounds and the upper
-	 * bounds
+	 * read point from external h2db, update the lowerbounds and the upper bounds
 	 */
 	public void readFromExtenalDB() {
 		pois = Strategy.dbExternal.readFromExtenalDB(Main.DIMENSION, lowerBounds, upperBounds);
 
 	}
-	
+
+	public List<Integer> searchNNWithoutDuplicate(Point queryPoint, int topK) {
+		List<Integer> list = null;
+		try {
+			list = (List<Integer>) kdtree.nearest(queryPoint.v, topK);
+		} catch (KeySizeException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 
 	public List<Integer> searchNN(Point queryPoint, int topK) {
 		List<Integer> list = null;
 		try {
-			list = (List<Integer>) kdtree.nearest(queryPoint.v, topK);
+			double[] key = new double[Main.DIMENSION + 1];
+			for (int i = 0; i < Main.DIMENSION; i++) {
+				key[i] = queryPoint.getValueOfADimension(i);
+			}
+			key[Main.DIMENSION] = 0;
+			list = (List<Integer>) kdtree.nearest(key, topK);
 		} catch (KeySizeException e) {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
