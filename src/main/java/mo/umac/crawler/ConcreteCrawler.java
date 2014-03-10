@@ -7,16 +7,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
 import com.infomatiq.jsi.Point;
 
+import edu.wlu.cs.levy.CG.KeySizeException;
+
 /**
  * Implement the d-dimensional upper bound proof for n-dimensional space
  * 
  * @author kate
- * 
  */
 public class ConcreteCrawler extends Strategy {
 
@@ -63,6 +65,7 @@ public class ConcreteCrawler extends Strategy {
 			// specify a di-1 dimensional crawling problem
 			ResultSetForADim resultsLowDim = crawlD(dSpace, d - 1, fixedValues);
 			// deals with the result points
+			// results.putAll(resultsLowDim);
 			results.addPoiIDs(resultsLowDim.getPoiIDs());
 			int nearestPointID = nearestPoint(resultsLowDim, d, middle);
 			double nearestPointInterval = resultsLowDim.getCrawledPointsInterval().get(nearestPointID);
@@ -70,19 +73,37 @@ public class ConcreteCrawler extends Strategy {
 				logger.debug("nearestPointID = " + nearestPointID);
 				logger.debug("nearestPointInterval = " + nearestPointInterval);
 			}
-
+			//
+			if (logger.isDebugEnabled()) {
+				// print results
+				Set<Integer> alreadyCrawledResults = resultsLowDim.getPoiIDs();
+				logger.debug("alreadyCrawledResults' size = " + alreadyCrawledResults.size());
+				logger.debug("alreadyCrawledResults: " + alreadyCrawledResults.toString());
+				Iterator it = alreadyCrawledResults.iterator();
+				while (it.hasNext()) {
+					int id = (Integer) it.next();
+					Point p = Memory.pois.get(id);
+					logger.debug(id + ": " + Utils.ArrayToString(p.v));
+				}
+				//
+				List<Integer> pointsInsideNotCrawled = pointsInsideNotCrawled(dSpace, middle, nearestPointInterval, d - 1, fixedValues, results);
+				logger.debug("pointsInsideNotCrawled.size() = " + pointsInsideNotCrawled.size());
+				if (pointsInsideNotCrawled.size() != 0) {
+					logger.debug("pointsInsideNotCrawled: " + pointsInsideNotCrawled.toString());
+					for (int i = 0; i < pointsInsideNotCrawled.size(); i++) {
+						int id = pointsInsideNotCrawled.get(i);
+						logger.debug(pointsInsideNotCrawled.get(i) + ": " + Memory.pois.get(id));
+					}
+				}
+			}
 			int numDimension = dSpace.getNumDimension();
 			double[] lowerBounds = dSpace.getLowerBounds();
 			double[] upperBounds = dSpace.getUpperBounds();
 			DSpace lowerSpace;
 			DSpace upperSpace;
 			//
-			if (nearestPointInterval >= 0 && middle + nearestPointInterval < upper) {
+			if (nearestPointInterval > 0 && middle + nearestPointInterval <= upper) {
 				if (logger.isDebugEnabled()) {
-					if (nearestPointInterval == 0) {
-						logger.debug("nearestPointInterval = " + nearestPointInterval);
-						logger.debug("nearestPointID = " + nearestPointID);
-					}
 					if (middle + nearestPointInterval == upper) {
 						logger.debug("middle + nearestPointInterval == upper : " + upper);
 					}
@@ -100,9 +121,9 @@ public class ConcreteCrawler extends Strategy {
 				upperSpace = new DSpace(numDimension, nearestPointBounds, upperBounds);
 				ResultSetForADim upperCrawledPoints = crawlD(upperSpace, d, fixedValues);
 				results.putAll(upperCrawledPoints);
-			} else if (nearestPointInterval < 0 && middle + nearestPointInterval > lower) {
+			} else if (nearestPointInterval < 0 && middle + nearestPointInterval >= lower) {
 				if (logger.isDebugEnabled()) {
-					if (middle + nearestPointInterval == upper) {
+					if (middle + nearestPointInterval == lower) {
 						logger.debug("middle + nearestPointInterval == lower : " + lower);
 					}
 				}
@@ -120,11 +141,71 @@ public class ConcreteCrawler extends Strategy {
 				results.putAll(upperCrawledPoints);
 			} else {
 				if (nearestPointInterval == 0) {
-					logger.debug("The nearest point is on the middle line!");
+					logger.debug("nearestPointInterval == 0");
+					// TODO
+					double[] middleBounds = upperBounds.clone();
+					middleBounds[d] = middle - Memory.EPSILON;
+					lowerSpace = new DSpace(numDimension, lowerBounds, middleBounds);
+					ResultSetForADim lowerCrawledPoints = crawlD(lowerSpace, d, fixedValues);
+					results.putAll(lowerCrawledPoints);
+					//
+					double[] nearestPointBounds = lowerBounds.clone();
+					nearestPointBounds[d] = middle + Memory.EPSILON;
+					upperSpace = new DSpace(numDimension, nearestPointBounds, upperBounds);
+					ResultSetForADim upperCrawledPoints = crawlD(upperSpace, d, fixedValues);
+					results.putAll(upperCrawledPoints);
+
 				}
 			}
 		}
 		return results;
+	}
+
+	private List<Integer> pointsInsideNotCrawled(DSpace dSpace, double middle, double nearestPointInterval, int d, double[] fixedValues,
+			ResultSetForADim results) {
+		List<Integer> pNotCrawled = new ArrayList<Integer>();
+		double[] lowk = new double[Main.DIMENSION + 1];
+		double[] uppk = new double[Main.DIMENSION + 1];
+		for (int i = 0; i <= d; i++) {
+			lowk[i] = dSpace.getLowerBoundOfADimension(i);
+			uppk[i] = dSpace.getUpperBoundOfADimension(i);
+		}
+		// for the d+1 dimension: interval
+		if (nearestPointInterval > 0) {
+			lowk[d + 1] = middle;
+			uppk[d + 1] = middle + nearestPointInterval;
+		} else if (nearestPointInterval < 0) {
+			lowk[d + 1] = middle + nearestPointInterval;
+			uppk[d + 1] = middle;
+		} else {
+			lowk[d + 1] = middle;
+			uppk[d + 1] = middle;
+		}
+
+		// for the other dimension: fixedValue
+		for (int i = d + 2; i < Main.DIMENSION; i++) {
+			lowk[i] = fixedValues[i];
+			uppk[i] = fixedValues[i];
+		}
+		// for the last dimension.
+		lowk[Main.DIMENSION] = 0;
+		uppk[Main.DIMENSION] = 1;
+		logger.info("covered region: " + Utils.ArrayToString(lowk) + " * " + Utils.ArrayToString(uppk));
+		logger.debug("covered region: " + Utils.ArrayToString(lowk) + " * " + Utils.ArrayToString(uppk));
+		try {
+			List<Integer> list = (List<Integer>) Memory.kdtree.range(lowk, uppk);
+			for (int i = 0; i < list.size(); i++) {
+				int id = list.get(i);
+				Set<Integer> crawledPoints = results.getPoiIDs();
+				if (!crawledPoints.contains(id)) {
+					pNotCrawled.add(id);
+				}
+			}
+		} catch (KeySizeException e) {
+			e.printStackTrace();
+			logger.error(e);
+		}
+		return pNotCrawled;
 	}
 
 	/**
@@ -179,14 +260,23 @@ public class ConcreteCrawler extends Strategy {
 		resultSet.addPoiIDs(answer);
 		//
 		double coveredRadius = CoveredRadius(dSpace, 0, queryPoint, answer, fixedValues);
-
-		if (lower < middle - coveredRadius) {
-			ResultSetForADim lowerResultSet = crawl1(dSpace, lower, middle - coveredRadius, fixedValues);
+		//
+		if (coveredRadius == 0) {
+			ResultSetForADim lowerResultSet = crawl1(dSpace, lower, middle - Memory.EPSILON, fixedValues);
 			resultSet.putAll(lowerResultSet);
-		}
-		if (middle + coveredRadius < upper) {
-			ResultSetForADim upperResultSet = crawl1(dSpace, middle + coveredRadius, upper, fixedValues);
+
+			ResultSetForADim upperResultSet = crawl1(dSpace, middle + Memory.EPSILON, upper, fixedValues);
 			resultSet.putAll(upperResultSet);
+		} else {
+
+			if (lower <= middle - coveredRadius) {
+				ResultSetForADim lowerResultSet = crawl1(dSpace, lower, middle - coveredRadius, fixedValues);
+				resultSet.putAll(lowerResultSet);
+			}
+			if (middle + coveredRadius <= upper) {
+				ResultSetForADim upperResultSet = crawl1(dSpace, middle + coveredRadius, upper, fixedValues);
+				resultSet.putAll(upperResultSet);
+			}
 		}
 
 		return resultSet;
@@ -204,7 +294,7 @@ public class ConcreteCrawler extends Strategy {
 	 */
 	private double CoveredRadius(DSpace dSpace, int d, Point queryPoint, List<Integer> answer, double[] fixedValues) {
 		double radius = 0;
-		int nearestPointId = 0;
+		int nearestPointId = -1;
 		for (int i = 0; i < answer.size(); i++) {
 			Integer poiID = answer.get(i);
 			Point point = Strategy.dbInMemory.pois.get(poiID);

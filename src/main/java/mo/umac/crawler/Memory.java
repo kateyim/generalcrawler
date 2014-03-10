@@ -74,7 +74,7 @@ public class Memory {
 			double[] v = new double[Main.DIMENSION + 1];
 			for (int i = 0; i < p.v.length; i++) {
 				v[i] = p.getValueOfADimension(i);
-				v[Main.DIMENSION] = id * EPSILON ;
+				v[Main.DIMENSION] = id * EPSILON;
 			}
 			try {
 				kdtree.insert(v, id);
@@ -145,10 +145,10 @@ public class Memory {
 				}
 			}
 
-			if (Strategy.countNumQueries % 100 == 0) {
+			if (Strategy.countNumQueries % 1000 == 0) {
 				logger.info("countNumQueries = " + Strategy.countNumQueries);
 				logger.info("countCrawledPoints = " + poisCrawledTimes.size());
-				logger.info("crawled points + crawed times: " + poisCrawledTimes.toString());
+				// logger.info("crawled points + crawled times: " + poisCrawledTimes.toString());
 			}
 		}
 		return resultsID;
