@@ -12,7 +12,7 @@ public class Main {
 	public final static String DB_NAME_FILE = "../crawler-data/glass-data/glass/glasses.txt";
 	public final static String DB_NAME_SOURCE = "../crawler-data/glass-data/glass/glasses";
 	public final static String DB_NAME_TARGET = "../crawler-data/glass-data/glass/glasses_test";
-	public final static int TOP_K = 10;
+	public final static int TOP_K = 20;
 	public final static int DIMENSION = 4;
 
 	// public final static String DB_NAME_FILE = "../crawler-data/glass-data/glass-small/small.txt";
