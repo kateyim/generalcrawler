@@ -3,6 +3,7 @@ package mo.umac.crawler;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import edu.wlu.cs.levy.CG.KeySizeException;
@@ -24,8 +25,10 @@ public abstract class Strategy {
 		logger.info("Start at : " + before);
 
 		DSpace dSpace = prepareData();
-		crawl(dSpace);
 
+		shutdownLogs();
+
+		crawl(dSpace);
 		// for debugging
 		checkUncrawledPoints();
 
@@ -48,6 +51,12 @@ public abstract class Strategy {
 		logger.info("Finished ! Oh ! Yeah! ");
 	}
 
+	private void shutdownLogs() {
+		Strategy.logger.setLevel(Level.INFO);
+		ConcreteCrawler.logger.setLevel(Level.INFO);
+		Memory.logger.setLevel(Level.INFO);
+	}
+
 	private void checkUncrawledPoints() {
 		logger.info("checking not crawled points");
 		Iterator it = Memory.pois.entrySet().iterator();
@@ -56,14 +65,15 @@ public abstract class Strategy {
 			int key = (Integer) entry.getKey();
 			if (!Memory.poisIDs.contains(key)) {
 				logger.info(key + ": " + Memory.pois.get(key).toString());
-				double[] newKey = new double[Main.DIMENSION+1];
-				for(int i = 0; i < Main.DIMENSION; i++ ){
+				double[] newKey = new double[Main.DIMENSION + 1];
+				for (int i = 0; i < Main.DIMENSION; i++) {
 					newKey[i] = Memory.pois.get(key).getValueOfADimension(i);
 				}
 				newKey[Main.DIMENSION] = key * Memory.EPSILON;
 				try {
-					int id = (Integer)Memory.kdtree.search(newKey);
-					logger.info("in kdtree: " + id + ": " + Utils.ArrayToString(newKey));
+					int id = (Integer) Memory.kdtree.search(newKey);
+					logger.info("in kdtree: " + id + ": "
+							+ Utils.ArrayToString(newKey));
 				} catch (KeySizeException e) {
 					e.printStackTrace();
 				}
@@ -80,12 +90,14 @@ public abstract class Strategy {
 		dbInMemory = new Memory();
 		// read point from external h2db, update the lowerbounds and the upper
 		// bounds
-		dbInMemory.readFromExtenalDB();
+		dbInMemory.readFromExtenalDB(Main.DIMENSION);
+		dbInMemory.pruning(Main.TOP_K);
 		// expandBoundary();
 		// dbInMemory.poisCrawledTimes = new HashMap<Integer, Integer>();
 		dbInMemory.index();
 		logger.info("There are in total " + dbInMemory.pois.size() + " points.");
-		logger.info("There are in total " + Memory.kdtree.size() + " points in the KD tree");
+		logger.info("There are in total " + Memory.kdtree.size()
+				+ " points in the KD tree");
 		// target database
 		dbExternal.createTables(Main.DB_NAME_TARGET);
 
@@ -103,7 +115,9 @@ public abstract class Strategy {
 
 	/*
 	 * (non-Javadoc)
-	 * @see mo.umac.crawler.YahooLocalCrawlerStrategy#endData() shut down the connection
+	 * 
+	 * @see mo.umac.crawler.YahooLocalCrawlerStrategy#endData() shut down the
+	 * connection
 	 */
 	private static void endData() {
 		H2DB.distroyConn();

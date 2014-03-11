@@ -17,7 +17,13 @@ DE support files
 /reports
 
 # logs
+/logs
 
+/results
+
+/lib
+
+/data
 #"temporary" build files
 /target
 

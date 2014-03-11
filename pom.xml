@@ -51,22 +51,14 @@
 			<version>1.3.172</version>
 		</dependency>
 
-		<!-- Do not use system scope -->
+		<!-- mvn install:install-file -Dfile=kd.jar -DgroupId=edu.wlu.cs.levy -DartifactId=kd 
+			-Dversion=1.0.5 -Dpackaging=jar -->
 		<!-- <dependency> -->
-		<!-- <groupId>kd</groupId> -->
+		<!-- <groupId>edu.wlu.cs.levy</groupId> -->
 		<!-- <artifactId>kd</artifactId> -->
-		<!-- <version>1.0</version> -->
-		<!-- <scope>system</scope> -->
-		<!-- <systemPath>${project.basedir}/lib/kd.jar</systemPath> -->
+		<!-- <version>1.0.5</version> -->
 		<!-- </dependency> -->
 
-		<!-- mvn install:install-file -Dfile=kd.jar -DgroupId=edu.wlu.cs.levy -DartifactId=kd -Dversion=1.0.5 -Dpackaging=jar -->
-		<dependency>
-			<groupId>edu.wlu.cs.levy</groupId>
-			<artifactId>kd</artifactId>
-			<version>1.0.5</version>
-		</dependency>
-		
 
 	</dependencies>
 

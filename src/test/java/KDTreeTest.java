@@ -54,7 +54,7 @@ public class KDTreeTest {
 	// String testSource = Main.DB_NAME_SOURCE;
 	// String testTarget = "";
 	// int dimension = 4;
-	// int k = 2; // not n
+	// int k = 1; // not n
 
 	/**
 	 * @param args
@@ -159,7 +159,8 @@ public class KDTreeTest {
 
 	public void exportDataToFile(String fileName, HashMap<Integer, Point> points) {
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(fileName)));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+					fileName)));
 
 			Iterator it = points.entrySet().iterator();
 			while (it.hasNext()) {
