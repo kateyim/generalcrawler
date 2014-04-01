@@ -9,20 +9,19 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.apache.log4j.Logger;
-
 import com.infomatiq.jsi.Point;
 
 /**
  * Operators of the database
  * 
  * @author Kate
- * 
  */
 public class H2DB {
 
@@ -494,7 +493,8 @@ public class H2DB {
 	}
 
 	/**
-	 * read point from external h2db, update the lower bounds and the upper bounds
+	 * read point from external h2db, update the lower bounds and the upper
+	 * bounds
 	 * 
 	 * @param dimension
 	 * @param lowerBounds
@@ -643,7 +643,8 @@ public class H2DB {
 	 * @param tableName
 	 * @param fileName
 	 */
-	// public void extractValuesFromItemTable(String dbName, String tableName, String fileName) {
+	// public void extractValuesFromItemTable(String dbName, String tableName,
+	// String fileName) {
 	// // delete the duplicate
 	// Map idMap = new HashMap<Integer, Integer>();
 	//
@@ -685,7 +686,8 @@ public class H2DB {
 	// // writing to the file
 	// File file = new File(fileName);
 	// try {
-	// BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true)));
+	// BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new
+	// FileOutputStream(file, true)));
 	// int n = idList.size();
 	// for (int i = 0; i < n; i++) {
 	// int id = idList.get(i);
@@ -760,4 +762,52 @@ public class H2DB {
 		}
 	}
 
+	/**
+	 * Converting the existing h2 database to fit the format used in genernal
+	 * crawler in d dimensional space.
+	 * 
+	 * @param oldH2
+	 * @param newH2
+	 */
+	public void convertH2ForDn(String oldH2, String newH2) {
+		HashMap<Integer, Point> pois = readFromExtenalDB(oldH2);
+		convertPointFile(pois, newH2);
+
+	}
+
+	/**
+	 * revised based on H2DB from project crawler
+	 * 
+	 * @param categoryQ
+	 * @param stateQ
+	 * @return
+	 */
+	private HashMap<Integer, Point> readFromExtenalDB(String dbNameSource) {
+		HashMap<Integer, Point> map = new HashMap<Integer, Point>();
+		try {
+			Connection conn = getConnection(dbNameSource);
+			Statement stat = conn.createStatement();
+			String sql = "select * from item";
+			try {
+				java.sql.ResultSet rs = stat.executeQuery(sql);
+				while (rs.next()) {
+					int id = rs.getInt(1);
+					double latitude = rs.getDouble(5);
+					double longitude = rs.getDouble(6);
+					int numCrawled = rs.getInt(11);
+					//
+					double[] v = { longitude, latitude };
+					Point poi = new Point(id, 2, v, numCrawled);
+					map.put(id, poi);
+				}
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			stat.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
 }

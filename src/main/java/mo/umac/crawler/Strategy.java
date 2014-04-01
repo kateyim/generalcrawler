@@ -26,8 +26,6 @@ public abstract class Strategy {
 
 		DSpace dSpace = prepareData();
 
-		shutdownLogs();
-
 		crawl(dSpace);
 		// for debugging
 		checkUncrawledPoints();
@@ -51,12 +49,6 @@ public abstract class Strategy {
 		logger.info("Finished ! Oh ! Yeah! ");
 	}
 
-	private void shutdownLogs() {
-		Strategy.logger.setLevel(Level.INFO);
-		ConcreteCrawler.logger.setLevel(Level.INFO);
-		Memory.logger.setLevel(Level.INFO);
-	}
-
 	private void checkUncrawledPoints() {
 		logger.info("checking not crawled points");
 		Iterator it = Memory.pois.entrySet().iterator();
@@ -72,8 +64,7 @@ public abstract class Strategy {
 				newKey[Main.DIMENSION] = key * Memory.EPSILON;
 				try {
 					int id = (Integer) Memory.kdtree.search(newKey);
-					logger.info("in kdtree: " + id + ": "
-							+ Utils.ArrayToString(newKey));
+					logger.info("in kdtree: " + id + ": " + Utils.ArrayToString(newKey));
 				} catch (KeySizeException e) {
 					e.printStackTrace();
 				}
@@ -88,20 +79,23 @@ public abstract class Strategy {
 		dbExternal = new H2DB(Main.DB_NAME_SOURCE, Main.DB_NAME_TARGET);
 		//
 		dbInMemory = new Memory();
-		// read point from external h2db, update the lowerbounds and the upper
-		// bounds
+		// read point from external h2db, update the lower bounds and the upper bounds
 		dbInMemory.readFromExtenalDB(Main.DIMENSION);
 		dbInMemory.pruning(Main.TOP_K);
 		// expandBoundary();
 		// dbInMemory.poisCrawledTimes = new HashMap<Integer, Integer>();
 		dbInMemory.index();
 		logger.info("There are in total " + dbInMemory.pois.size() + " points.");
-		logger.info("There are in total " + Memory.kdtree.size()
-				+ " points in the KD tree");
+		logger.info("There are in total " + Memory.kdtree.size() + " points in the KD tree");
 		// target database
 		dbExternal.createTables(Main.DB_NAME_TARGET);
-
+		// add at 2014-4-1
+		if (Main.hasBoundary) {
+			dbInMemory.lowerBounds = Main.lowerBounds;
+			dbInMemory.upperBounds = Main.upperBounds;
+		}
 		DSpace dSpace = dbInMemory.space();
+
 		logger.info("The dSpace is " + dSpace.toString());
 		return dSpace;
 	}
@@ -115,9 +109,7 @@ public abstract class Strategy {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see mo.umac.crawler.YahooLocalCrawlerStrategy#endData() shut down the
-	 * connection
+	 * @see mo.umac.crawler.YahooLocalCrawlerStrategy#endData() shut down the connection
 	 */
 	private static void endData() {
 		H2DB.distroyConn();

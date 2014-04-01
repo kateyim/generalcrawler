@@ -20,15 +20,17 @@ public class Analyse {
 	 */
 	public static void main(String[] args) {
 		Analyse a = new Analyse();
-		// String fileName = "results/k=1";
-		// String outputFile = "results/k=1.output";
-//		String fileName = "results/k=10";
-//		String queryFile = "results/k=10.query";
-//		String pointFile = "results/k=10.point";
-		String fileName = "results/k=20";
-		String queryFile = "results/k=20.query";
-		String pointFile = "results/k=20.point";
+		// String fileName = "results/info.log";
+		// String queryFile = "results/k=270.query";
+		// String pointFile = "results/k=270.point";
+
+		String fileName = "../data-experiment/info.log";
+		String queryFile = "../data-experiment/info.query";
+		String pointFile = "../data-experiment/info.point";
+//		String queryFile2 = "../data-experiment/info2.query";
+//		String pointFile2 = "../data-experiment/info2.point";
 		a.readLog(fileName, queryFile, pointFile);
+		// a.readLog2(fileName, queryFile2, pointFile2);
 
 	}
 
@@ -60,7 +62,7 @@ public class Analyse {
 		// print query
 		BufferedWriter bw = null;
 		try {
-			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(queryFile, false)));
+			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(queryFile, true)));
 			for (int i = 0; i < queryList.size(); i++) {
 				bw.write(queryList.get(i));
 				bw.newLine();
@@ -76,7 +78,7 @@ public class Analyse {
 		// print point
 		bw = null;
 		try {
-			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pointFile, false)));
+			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pointFile, true)));
 			for (int i = 0; i < pointList.size(); i++) {
 				bw.write(pointList.get(i));
 				bw.newLine();

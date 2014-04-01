@@ -108,7 +108,8 @@ public class Memory {
 	}
 
 	/**
-	 * compute the number of dimensions and the boundaries in the DSpace structure
+	 * compute the number of dimensions and the boundaries in the DSpace
+	 * structure
 	 * 
 	 * @return
 	 */
@@ -145,22 +146,23 @@ public class Memory {
 			}
 
 		}
-		if (Strategy.countNumQueries % 1000 == 0) {
+		if (Strategy.countNumQueries % 10 == 0) {
 			logger.info("countNumQueries = " + Strategy.countNumQueries);
 			logger.info("countCrawledPoints = " + poisCrawledTimes.size());
-			// logger.info("crawled points + crawled times: " + poisCrawledTimes.toString());
+			// logger.info("crawled points + crawled times: " +
+			// poisCrawledTimes.toString());
 		}
 		return resultsID;
 	}
 
 	/**
-	 * read point from external h2db, update the lowerbounds and the upper bounds
+	 * read point from external h2db, update the lowerbounds and the upper
+	 * bounds
 	 * 
 	 * @param dimension
 	 */
 	public void readFromExtenalDB(int dimension) {
 		pois = Strategy.dbExternal.readFromExtenalDB(dimension, lowerBounds, upperBounds);
-
 	}
 
 	public List<Integer> searchNNWithoutDuplicate(Point queryPoint, int topK) {
@@ -206,9 +208,9 @@ public class Memory {
 			Entry entry = (Entry) it.next();
 			int id = (Integer) entry.getKey();
 			Point p = (Point) entry.getValue();
-//			if (logger.isDebugEnabled()) {
-//				logger.debug("For point " + id + ": " + p.toString());
-//			}
+			// if (logger.isDebugEnabled()) {
+			// logger.debug("For point " + id + ": " + p.toString());
+			// }
 			int hash = p.hashCode();
 			int[] gotValues = map.get(hash);
 			if (gotValues == null) {
@@ -218,9 +220,10 @@ public class Memory {
 					ids[i] = Integer.MAX_VALUE;
 				}
 				map.put(hash, ids);
-//				if (logger.isDebugEnabled()) {
-//					logger.debug("map put " + hash + " + " + Utils.ArrayToString(ids));
-//				}
+				// if (logger.isDebugEnabled()) {
+				// logger.debug("map put " + hash + " + " +
+				// Utils.ArrayToString(ids));
+				// }
 			} else {
 				// update top-k smallest ids
 				for (int i = 0; i < topK; i++) {
@@ -232,11 +235,11 @@ public class Memory {
 				}
 				map.remove(hash);
 				map.put(hash, gotValues);
-//				if (logger.isDebugEnabled()) {
-//					logger.debug("map collision");
-//					logger.debug("map put " + hash + " + "
-//							+ Utils.ArrayToString(gotValues));
-//				}
+				// if (logger.isDebugEnabled()) {
+				// logger.debug("map collision");
+				// logger.debug("map put " + hash + " + "
+				// + Utils.ArrayToString(gotValues));
+				// }
 
 			}
 		}
@@ -248,7 +251,7 @@ public class Memory {
 			int[] ids = (int[]) entry.getValue();
 			for (int i = 0; i < topK; i++) {
 				int id = ids[i];
-				if( id < Integer.MAX_VALUE){
+				if (id < Integer.MAX_VALUE) {
 					newPois.put(id, pois.get(id));
 				}
 			}
