@@ -45,7 +45,7 @@ public abstract class Strategy {
 		//
 		logger.info("countNumQueries = " + countNumQueries);
 		logger.info("number of points crawled = " + dbInMemory.poisIDs.size());
-		logger.info(Memory.poisCrawledTimes.toString());
+		// logger.info(Memory.poisCrawledTimes.toString());
 		logger.info("Finished ! Oh ! Yeah! ");
 	}
 
@@ -81,7 +81,7 @@ public abstract class Strategy {
 		dbInMemory = new Memory();
 		// read point from external h2db, update the lower bounds and the upper bounds
 		dbInMemory.readFromExtenalDB(Main.DIMENSION);
-		dbInMemory.pruning(Main.TOP_K);
+		dbInMemory.pruning(Main.OVERLAP_NUM);
 		// expandBoundary();
 		// dbInMemory.poisCrawledTimes = new HashMap<Integer, Integer>();
 		dbInMemory.index();
@@ -109,6 +109,7 @@ public abstract class Strategy {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see mo.umac.crawler.YahooLocalCrawlerStrategy#endData() shut down the connection
 	 */
 	private static void endData() {

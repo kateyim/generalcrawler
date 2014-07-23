@@ -197,9 +197,9 @@ public class Memory {
 	/**
 	 * pruning pois, and remove the >k points at the same location
 	 * 
-	 * @param topK
+	 * @param overlapNum
 	 */
-	public void pruning(int topK) {
+	public void pruning(int overlapNum) {
 		logger.info("pruning");
 		// hashcode - top-k smallest ids
 		HashMap<Integer, int[]> map = new HashMap<Integer, int[]>();
@@ -214,9 +214,9 @@ public class Memory {
 			int hash = p.hashCode();
 			int[] gotValues = map.get(hash);
 			if (gotValues == null) {
-				int[] ids = new int[topK];
+				int[] ids = new int[overlapNum];
 				ids[0] = id;
-				for (int i = 1; i < topK; i++) {
+				for (int i = 1; i < overlapNum; i++) {
 					ids[i] = Integer.MAX_VALUE;
 				}
 				map.put(hash, ids);
@@ -226,7 +226,7 @@ public class Memory {
 				// }
 			} else {
 				// update top-k smallest ids
-				for (int i = 0; i < topK; i++) {
+				for (int i = 0; i < overlapNum; i++) {
 					int existId = gotValues[i];
 					if (id < existId) {
 						gotValues[i] = id;
@@ -249,7 +249,7 @@ public class Memory {
 		while (it2.hasNext()) {
 			Entry entry = (Entry) it2.next();
 			int[] ids = (int[]) entry.getValue();
-			for (int i = 0; i < topK; i++) {
+			for (int i = 0; i < overlapNum; i++) {
 				int id = ids[i];
 				if (id < Integer.MAX_VALUE) {
 					newPois.put(id, pois.get(id));
