@@ -12,17 +12,19 @@ public class Main {
 	public static boolean debug = false;
 
 	// testing synthetic
-	public final static String DB_NAME_D2 = "../data-experiment/synthetic/uniform-2000";
+	// public final static String DB_NAME_D2 = "../data-experiment/synthetic/uniform-2000";
 	// public final static String DB_NAME_SOURCE = "../data-experiment/synthetic/uniform-2000-dn";
 	// public final static String DB_NAME_D2 = "../data-experiment/synthetic/skew-2000-0.3";
 	// public final static String DB_NAME_SOURCE = "../data-experiment/synthetic/skew-2000-0.3-dn";
-	// public final static String DB_NAME_TARGET = "../data-experiment/synthetic/target";
-	// public final static int TOP_K = 10;
-	// public final static int DIMENSION = 2;
-//	public static final int OVERLAP_NUM = TOP_K;
-	public static double[] lowerBounds = { 0.0, 0.0 };
-	public static double[] upperBounds = { 1000.0, 1000.0 };
-	// public static boolean hasBoundary = true;
+	public final static String DB_NAME_TARGET = "../data-experiment/d-dimension/target";
+	public final static String DB_NAME_D2 = "";
+	public final static String DB_NAME_SOURCE = "../data-experiment/d-dimension/1d-250";
+	public final static int TOP_K = 10;
+	public final static int DIMENSION = 1;
+	public static final int OVERLAP_NUM = TOP_K;
+	public static double[] lowerBounds = { 0.0, 0.0, 0.0, 0.0 };
+	public static double[] upperBounds = { 1000.0, 1000.0, 1000.0, 1000.0 };
+	public static boolean hasBoundary = true;
 
 	// testing yahoo
 	// public final static String DB_NAME_D2 = "../data-experiment/yahoo/ny-prun-4";
@@ -35,12 +37,12 @@ public class Main {
 	// public static double[] upperBounds = { -71.777491, 45.015865 };
 	// public static boolean hasBoundary = true;
 
-	public final static String DB_NAME_SOURCE = "../data-experiment/glass-data/glass/glasses-570";
-	public final static String DB_NAME_TARGET = "../data-experiment/glass-data/glass/glasses_test";
-	public final static int TOP_K = 20;
-	public final static int DIMENSION = 4;
-	public static final int OVERLAP_NUM = 5;
-	public static boolean hasBoundary = false;
+	// public final static String DB_NAME_SOURCE = "../data-experiment/glass-data/glass/glasses-570";
+	// public final static String DB_NAME_TARGET = "../data-experiment/glass-data/glass/glasses_test";
+	// public final static int TOP_K = 20;
+	// public final static int DIMENSION = 4;
+	// public static final int OVERLAP_NUM = 5;
+	// public static boolean hasBoundary = false;
 
 	// public final static String DB_NAME_FILE = "../crawler-data/glass-data/glass/glasses.txt";
 	// public final static String DB_NAME_SOURCE = "../crawler-data/glass-data/glass/glasses";

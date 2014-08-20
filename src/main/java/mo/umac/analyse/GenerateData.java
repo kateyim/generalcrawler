@@ -1,11 +1,9 @@
+package mo.umac.analyse;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -13,8 +11,6 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 import mo.umac.crawler.H2DB;
-import mo.umac.crawler.Main;
-import mo.umac.crawler.Memory;
 
 import org.apache.log4j.xml.DOMConfigurator;
 
@@ -24,15 +20,25 @@ import edu.wlu.cs.levy.CG.KDTree;
 import edu.wlu.cs.levy.CG.KeyDuplicateException;
 import edu.wlu.cs.levy.CG.KeySizeException;
 
-public class KDTreeTest {
+public class GenerateData {
 
-	String pointFile = "../crawler-data/glass-data/test-2d/points.txt";
-	String testSource = "../crawler-data/glass-data/test-2d/source";
-	String testTarget = "";
-	int dimension = 2;
-	int n = 50;
-	int k = 5;
-	double[] v = { 10, 10 };
+	/********************************* testing d dimensional space ************************************/
+	public String pointFile = "../data-experiment/d-dimension/points-1d-250.txt";
+	public String testSource = "../data-experiment/d-dimension/1d-250";
+	public String testTarget = "";
+	public int dimension = 1;
+	public int n = 250;
+	public int k = 10;
+	public static double[] scope = { 1000, 1000, 1000, 1000 };
+
+	/*************************************************************************************************/
+	// String pointFile = "../crawler-data/glass-data/test-2d/points.txt";
+	// String testSource = "../crawler-data/glass-data/test-2d/source";
+	// String testTarget = "";
+	// int dimension = 2;
+	// int n = 50;
+	// int k = 5;
+	// double[] v = { 10, 10 };
 
 	// String pointFile = "../crawler-data/glass-data/test-3d/points.txt";
 	// String testSource = "../crawler-data/glass-data/test-3d/source";
@@ -62,7 +68,7 @@ public class KDTreeTest {
 	public static void main(String[] args) {
 		DOMConfigurator.configure("src/main/resources/log4j.xml");
 
-		KDTreeTest test = new KDTreeTest();
+		GenerateData test = new GenerateData();
 		test.init();
 
 		// test 1
@@ -92,7 +98,7 @@ public class KDTreeTest {
 		index(kdTree, points);
 		// rtree.print();
 		//
-		Point searchPoint = new Point(dimension, v);
+		Point searchPoint = new Point(dimension, scope);
 
 		List<Integer> results = searchNN(kdTree, searchPoint, k);
 
@@ -147,8 +153,8 @@ public class KDTreeTest {
 		Random random = new Random(System.currentTimeMillis());
 		for (int i = 0; i < numPoint; i++) {
 			for (int j = 0; j < dimension; j++) {
-				// v[j] = random.nextDouble() * 100;
-				v[j] = random.nextInt() % 10;
+				v[j] = random.nextDouble() * scope[j];
+				// v[j] = random.nextInt() % 10;
 			}
 
 			Point Point = new Point(dimension, v);
