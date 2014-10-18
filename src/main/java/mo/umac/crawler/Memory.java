@@ -146,7 +146,7 @@ public class Memory {
 			}
 
 		}
-		if (Strategy.countNumQueries % 10 == 0) {
+		if (Strategy.countNumQueries % 100000 == 0) {
 			logger.info("countNumQueries = " + Strategy.countNumQueries);
 			logger.info("countCrawledPoints = " + poisCrawledTimes.size());
 			// logger.info("crawled points + crawled times: " +

@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -14,6 +15,9 @@ import mo.umac.crawler.H2DB;
 
 import org.apache.log4j.xml.DOMConfigurator;
 
+import paint.PaintShapes;
+import paint.WindowUtilities;
+
 import com.infomatiq.jsi.Point;
 
 import edu.wlu.cs.levy.CG.KDTree;
@@ -23,13 +27,13 @@ import edu.wlu.cs.levy.CG.KeySizeException;
 public class GenerateData {
 
 	/********************************* testing d dimensional space ************************************/
-	public String pointFile = "../data-experiment/d-dimension/points-1d-250.txt";
-	public String testSource = "../data-experiment/d-dimension/1d-250";
+	public String pointFile = "../data-experiment/synthetic/3d-skewed/points-skewed-3d-2500.txt";
+	public String testSource = "../data-experiment/synthetic/3d-skewed/skewed-3d-2500";
 	public String testTarget = "";
-	public int dimension = 1;
-	public int n = 250;
-	public int k = 10;
-	public static double[] scope = { 1000, 1000, 1000, 1000 };
+	public int dimension = 3;
+	public int n = 2500;
+	public int k = 100;
+	public static double[] scope = { 1000, 1000, 1000, 1000, 1000 };
 
 	/*************************************************************************************************/
 	// String pointFile = "../crawler-data/glass-data/test-2d/points.txt";
@@ -67,7 +71,10 @@ public class GenerateData {
 	 */
 	public static void main(String[] args) {
 		DOMConfigurator.configure("src/main/resources/log4j.xml");
-
+//		PaintShapes.painting = true;
+//		if (PaintShapes.painting) {
+//			WindowUtilities.openInJFrame(PaintShapes.paint, 1000, 1000);
+//		}
 		GenerateData test = new GenerateData();
 		test.init();
 
@@ -77,7 +84,8 @@ public class GenerateData {
 	}
 
 	public void init() {
-		HashMap<Integer, Point> points = generatePoints(dimension, n);
+		// HashMap<Integer, Point> points = generatePointsUniform(dimension, n);
+		HashMap<Integer, Point> points = generatePointsSkewed(dimension, n);
 		exportDataToFile(pointFile, points);
 		H2DB db = new H2DB(testSource, testTarget);
 		db.createTables(testSource);
@@ -147,19 +155,70 @@ public class GenerateData {
 		return db.readFromExtenalDB();
 	}
 
-	public HashMap<Integer, Point> generatePoints(int dimension, int numPoint) {
+	public HashMap<Integer, Point> generatePointsUniform(int dimension, int numPoint) {
 		double[] v = new double[dimension];
 		HashMap<Integer, Point> map = new HashMap<Integer, Point>();
 		Random random = new Random(System.currentTimeMillis());
 		for (int i = 0; i < numPoint; i++) {
 			for (int j = 0; j < dimension; j++) {
 				v[j] = random.nextDouble() * scope[j];
-				// v[j] = random.nextInt() % 10;
 			}
 
 			Point Point = new Point(dimension, v);
 			map.put(i, Point);
 		}
+		return map;
+	}
+
+	public HashMap<Integer, Point> generatePointsSkewed(int dimension, int numPoint) {
+		HashMap<Integer, Point> map = new HashMap<Integer, Point>();
+		List<double[]> list = new ArrayList<double[]>();
+		//
+		double mean = 0.1;
+		double lamda = 1 / mean;
+		double[] minX = new double[dimension];
+		double[] maxX = new double[dimension];
+		//
+		for (int i = 0; i < dimension; i++) {
+			minX[i] = Double.MAX_VALUE;
+			maxX[i] = Double.MIN_VALUE;
+		}
+		//
+		Random random = new Random(System.currentTimeMillis());
+		Random r2 = new Random(System.currentTimeMillis());
+		//
+		for (int i = 0; i < numPoint; i++) {
+			double[] v = new double[dimension];
+			for (int j = 0; j < dimension; j++) {
+				double u1 = random.nextDouble();
+				boolean sign1 = r2.nextBoolean();
+				v[j] = (Math.log(1 - u1) / (-lamda));
+				if (v[j] < minX[j]) {
+					minX[j] = v[j];
+				}
+				if (v[j] > maxX[j]) {
+					maxX[j] = v[j];
+				}
+
+				if (!sign1) {
+					v[j] *= -1;
+				}
+			}
+			list.add(v);
+
+		}
+		//
+		for (int i = 0; i < list.size(); i++) {
+			double[] v = list.get(i);
+			for (int j = 0; j < dimension; j++) {
+				v[j] = (500 + v[j] / (maxX[j] - minX[j]) * 500) % 1000;
+			}
+			Point point = new Point(dimension, v);
+			map.put(i, point);
+			// PaintShapes.paint.addPoint(point);
+		}
+		// debug: paint:
+		// PaintShapes.paint.myRepaint();
 		return map;
 	}
 

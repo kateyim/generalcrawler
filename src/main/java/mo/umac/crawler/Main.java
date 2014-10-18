@@ -16,59 +16,27 @@ public class Main {
 	// public final static String DB_NAME_SOURCE = "../data-experiment/synthetic/uniform-2000-dn";
 	// public final static String DB_NAME_D2 = "../data-experiment/synthetic/skew-2000-0.3";
 	// public final static String DB_NAME_SOURCE = "../data-experiment/synthetic/skew-2000-0.3-dn";
-	public final static String DB_NAME_TARGET = "../data-experiment/d-dimension/target";
+
 	public final static String DB_NAME_D2 = "";
-	public final static String DB_NAME_SOURCE = "../data-experiment/d-dimension/1d-250";
-	public final static int TOP_K = 10;
-	public final static int DIMENSION = 1;
+//	public final static String DB_NAME_SOURCE = "../data-experiment/synthetic/1d-uniform/uniform-1d-300";
+	public final static String DB_NAME_SOURCE = "../data-experiment/synthetic/3d-skewed/skewed-3d-2500";
+	public final static String DB_NAME_TARGET = "../data-experiment/synthetic/target";
+	public final static int TOP_K = 100;
+	public final static int DIMENSION = 3;
 	public static final int OVERLAP_NUM = TOP_K;
-	public static double[] lowerBounds = { 0.0, 0.0, 0.0, 0.0 };
-	public static double[] upperBounds = { 1000.0, 1000.0, 1000.0, 1000.0 };
+	public static double[] lowerBounds = { 0.0, 0.0, 0.0, 0.0, 0.0 };
+	public static double[] upperBounds = { 1000.0, 1000.0, 1000.0, 1000.0, 1000.0 };
 	public static boolean hasBoundary = true;
 
-	// testing yahoo
-	// public final static String DB_NAME_D2 = "../data-experiment/yahoo/ny-prun-4";
-	// public final static String DB_NAME_SOURCE = "../data-experiment/yahoo/ny-prun-dn-4";
-	// public final static String DB_NAME_TARGET = "../data-experiment/yahoo/target";
-	// public final static int TOP_K = 100;
-	// public final static int DIMENSION = 2;
-	// // NY: Env[-79.76259 : -71.777491, 40.477399 : 45.015865]
-	// public static double[] lowerBounds = { -79.76259, 40.477399 };
-	// public static double[] upperBounds = { -71.777491, 45.015865 };
-	// public static boolean hasBoundary = true;
-
-	// public final static String DB_NAME_SOURCE = "../data-experiment/glass-data/glass/glasses-570";
+	// public final static String DB_NAME_D2 = "";
+	// public final static String DB_NAME_SOURCE = "../data-experiment/glass-data/glass/glasses-0.8";
 	// public final static String DB_NAME_TARGET = "../data-experiment/glass-data/glass/glasses_test";
-	// public final static int TOP_K = 20;
+	// public final static int TOP_K = 10;
 	// public final static int DIMENSION = 4;
 	// public static final int OVERLAP_NUM = 5;
-	// public static boolean hasBoundary = false;
-
-	// public final static String DB_NAME_FILE = "../crawler-data/glass-data/glass/glasses.txt";
-	// public final static String DB_NAME_SOURCE = "../crawler-data/glass-data/glass/glasses";
-	// public final static String DB_NAME_TARGET = "../crawler-data/glass-data/glass/glasses_test";
-	// public final static int TOP_K = 5;
-	// public final static int DIMENSION = 4;
-
-	// public final static String DB_NAME_FILE = "../crawler-data/glass-data/glass-small/small.txt";
-	// public final static String DB_NAME_SOURCE = "../crawler-data/glass-data/glass-small/small";
-	// public final static String DB_NAME_TARGET = "../crawler-data/glass-data/glass-small/small_test";
-	// public final static int TOP_K = 1;
-	// public final static int DIMENSION = 4;
-
-	// for testing-2d
-	// public final static String DB_NAME_SOURCE = "../crawler-data/glass-data/test-2d/source";;
-	// public final static String DB_NAME_TARGET = "../crawler-data/glass-data/test-2d/target";;
-	// public final static String DB_NAME_CRAWL = "../crawler-data/glass-data/test-2d/crawl";
-	// public final static int TOP_K = 10;
-	// public final static int DIMENSION = 2;
-
-	// for testing-4d
-	// public final static String DB_NAME_SOURCE = "../crawler-data/glass-data/test-4d/source";;
-	// public final static String DB_NAME_TARGET = "../crawler-data/glass-data/test-4d/target";;
-	// public final static String DB_NAME_CRAWL = "../crawler-data/glass-data/test-4d/crawl";
-	// public final static int TOP_K = 3;
-	// public final static int DIMENSION = 4;
+	// public static double[] lowerBounds = { 40, 10, 9, 115 };
+	// public static double[] upperBounds = { 64, 49, 24, 155 };
+	// public static boolean hasBoundary = true;
 
 	public static void main(String[] args) {
 		Main.debug = false;

@@ -861,4 +861,53 @@ public class H2DB {
 			e.printStackTrace();
 		}
 	}
+	
+	public void sample(int divisor, int divident) {
+		String sql = sqlSelectStar + ITEM;
+//		int index = -1;
+		try {
+			Connection conSrc = getConnection(dbNameSource);
+			Statement statSrc = conSrc.createStatement();
+
+			Connection conTarget = getConnection(dbNameTarget);
+			conTarget.setAutoCommit(false);
+			Statement statTarget = conTarget.createStatement();
+			// create tables
+			statTarget.execute(sqlCreateItemTableKey);
+
+			PreparedStatement prepItem = conTarget
+					.prepareStatement(sqlPrepInsertItem);
+
+			java.sql.ResultSet rs = statSrc.executeQuery(sql);
+			Random random = new Random(System.currentTimeMillis());
+			while (rs.next()) {
+
+				int pointID = rs.getInt(1);
+				String values = rs.getString(2);
+				int numCrawled = rs.getInt(3);
+
+				int r = Math.abs(random.nextInt());
+
+//				index++;
+				if (r % divisor < divident) {
+					// write
+					prepItem.setInt(1, pointID);
+					prepItem.setString(2, values);
+					prepItem.setDouble(3, numCrawled);
+					prepItem.addBatch();
+				}
+
+			}
+			rs.close();
+			statSrc.close();
+
+			prepItem.executeBatch();
+			conTarget.commit();
+			conTarget.setAutoCommit(true);
+			statTarget.close();
+			prepItem.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

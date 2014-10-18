@@ -32,11 +32,6 @@ public class ConcreteCrawler extends Strategy {
 
 	@Override
 	public void crawl(DSpace dSpace) {
-		if (logger.isDebugEnabled()) {
-			logger.info("------------crawling---------");
-			logger.info(dSpace.toString());
-		}
-
 		int numDimensions = dSpace.getNumDimension();
 		double[] fixedValues = new double[numDimensions];
 		crawlD(dSpace, numDimensions - 1, fixedValues);
@@ -60,39 +55,12 @@ public class ConcreteCrawler extends Strategy {
 		} else {
 			double middle = (lower + upper) / 2;
 			fixedValues[d] = middle;
-			if (logger.isDebugEnabled()) {
-				logger.debug("crawling: " + dSpace.toString() + "; " + d + "; "
-						+ Utils.ArrayToString(fixedValues));
-				if(fixedValues[2] == 16 && fixedValues[3] == 135){
-					logger.debug("here");
-				}
-			}
 			// specify a di-1 dimensional crawling problem
 			ResultSetForADim resultsLowDim = crawlD(dSpace, d - 1, fixedValues);
 			results.addPoiIDs(resultsLowDim.getPoiIDs());
 			int nearestPointID = nearestPoint(resultsLowDim, d, middle);
 			double nearestPointInterval = resultsLowDim
 					.getCrawledPointsInterval().get(nearestPointID);
-			// debug
-			if (logger.isDebugEnabled()) {
-				logger.debug("nearestPointID = " + nearestPointID);
-				logger.debug("nearestPointInterval = " + nearestPointInterval);
-				// print results
-				Set<Integer> alreadyCrawledResults = resultsLowDim.getPoiIDs();
-				logger.debug("alreadyCrawledResults' size = "
-						+ alreadyCrawledResults.size());
-				logger.debug("alreadyCrawledResults: "
-						+ alreadyCrawledResults.toString());
-				Iterator it = alreadyCrawledResults.iterator();
-				while (it.hasNext()) {
-					int id = (Integer) it.next();
-					Point p = Memory.pois.get(id);
-					logger.debug(id + ": " + Utils.ArrayToString(p.v));
-				}
-				pointsInsideNotCrawled(dSpace, middle, nearestPointInterval,
-						d - 1, fixedValues, results);
-				// end debug
-			}
 			int numDimension = dSpace.getNumDimension();
 			double[] lowerBounds = dSpace.getLowerBounds();
 			double[] upperBounds = dSpace.getUpperBounds();
@@ -102,12 +70,6 @@ public class ConcreteCrawler extends Strategy {
 			nearestPointInterval = Math.abs(nearestPointInterval);
 			if (nearestPointInterval != 0) {
 				if (middle - nearestPointInterval >= lower) {
-					if (logger.isDebugEnabled()) {
-						if (middle + nearestPointInterval == lower) {
-							logger.debug("middle - nearestPointInterval == lower : "
-									+ lower);
-						}
-					}
 					double[] middleBounds = upperBounds.clone();
 					middleBounds[d] = middle - nearestPointInterval;
 					lowerSpace = new DSpace(numDimension, lowerBounds,
@@ -119,12 +81,6 @@ public class ConcreteCrawler extends Strategy {
 				}
 
 				if (middle + Math.abs(nearestPointInterval) <= upper) {
-					if (logger.isDebugEnabled()) {
-						if (middle + nearestPointInterval == upper) {
-							logger.debug("middle + nearestPointInterval == upper : "
-									+ upper);
-						}
-					}
 					double[] nearestPointBounds = lowerBounds.clone();
 					nearestPointBounds[d] = middle + nearestPointInterval;
 					upperSpace = new DSpace(numDimension, nearestPointBounds,
@@ -135,9 +91,6 @@ public class ConcreteCrawler extends Strategy {
 				}
 
 			} else {
-				if (logger.isDebugEnabled()) {
-					logger.debug("nearestPointInterval == 0");
-				}
 				if (middle - Memory.EPSILON >= lower) {
 
 					double[] middleBounds = upperBounds.clone();

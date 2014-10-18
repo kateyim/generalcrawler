@@ -3,7 +3,6 @@ package mo.umac.crawler;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import edu.wlu.cs.levy.CG.KeySizeException;
@@ -28,7 +27,7 @@ public abstract class Strategy {
 
 		crawl(dSpace);
 		// for debugging
-		checkUncrawledPoints();
+		// checkUncrawledPoints();
 
 		// After crawling:
 		// logger.info("removing duplicate records in the external db");
