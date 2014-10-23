@@ -27,11 +27,11 @@ import edu.wlu.cs.levy.CG.KeySizeException;
 public class GenerateData {
 
 	/********************************* testing d dimensional space ************************************/
-	public String pointFile = "../data-experiment/synthetic/3d-skewed/points-skewed-3d-2500.txt";
-	public String testSource = "../data-experiment/synthetic/3d-skewed/skewed-3d-2500";
+	public String pointFile = "../data-experiment/synthetic/genPointTest.txt";
+	public String testSource = "../data-experiment/synthetic/1d-uniform/3900";
 	public String testTarget = "";
-	public int dimension = 3;
-	public int n = 2500;
+	public int dimension = 1;
+	public int n = 3900;
 	public int k = 100;
 	public static double[] scope = { 1000, 1000, 1000, 1000, 1000 };
 
@@ -71,10 +71,10 @@ public class GenerateData {
 	 */
 	public static void main(String[] args) {
 		DOMConfigurator.configure("src/main/resources/log4j.xml");
-//		PaintShapes.painting = true;
-//		if (PaintShapes.painting) {
-//			WindowUtilities.openInJFrame(PaintShapes.paint, 1000, 1000);
-//		}
+		// PaintShapes.painting = true;
+		// if (PaintShapes.painting) {
+		// WindowUtilities.openInJFrame(PaintShapes.paint, 1000, 1000);
+		// }
 		GenerateData test = new GenerateData();
 		test.init();
 
@@ -84,8 +84,8 @@ public class GenerateData {
 	}
 
 	public void init() {
-		// HashMap<Integer, Point> points = generatePointsUniform(dimension, n);
-		HashMap<Integer, Point> points = generatePointsSkewed(dimension, n);
+		HashMap<Integer, Point> points = generatePointsUniform(dimension, n);
+		// HashMap<Integer, Point> points = generatePointsSkewed(dimension, n);
 		exportDataToFile(pointFile, points);
 		H2DB db = new H2DB(testSource, testTarget);
 		db.createTables(testSource);
@@ -224,8 +224,7 @@ public class GenerateData {
 
 	public void exportDataToFile(String fileName, HashMap<Integer, Point> points) {
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
-					fileName)));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(fileName)));
 
 			Iterator it = points.entrySet().iterator();
 			while (it.hasNext()) {

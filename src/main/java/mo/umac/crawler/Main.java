@@ -17,26 +17,25 @@ public class Main {
 	// public final static String DB_NAME_D2 = "../data-experiment/synthetic/skew-2000-0.3";
 	// public final static String DB_NAME_SOURCE = "../data-experiment/synthetic/skew-2000-0.3-dn";
 
-	public final static String DB_NAME_D2 = "";
-//	public final static String DB_NAME_SOURCE = "../data-experiment/synthetic/1d-uniform/uniform-1d-300";
-	public final static String DB_NAME_SOURCE = "../data-experiment/synthetic/3d-skewed/skewed-3d-2500";
-	public final static String DB_NAME_TARGET = "../data-experiment/synthetic/target";
-	public final static int TOP_K = 100;
-	public final static int DIMENSION = 3;
-	public static final int OVERLAP_NUM = TOP_K;
-	public static double[] lowerBounds = { 0.0, 0.0, 0.0, 0.0, 0.0 };
-	public static double[] upperBounds = { 1000.0, 1000.0, 1000.0, 1000.0, 1000.0 };
-	public static boolean hasBoundary = true;
+//	public final static String DB_NAME_D2 = "";
+//	public final static String DB_NAME_SOURCE = "../data-experiment/synthetic/1d-skewed/1000";
+//	public final static String DB_NAME_TARGET = "../data-experiment/synthetic/target";
+//	public final static int TOP_K = 100;
+//	public final static int DIMENSION = 1;
+//	public static final int OVERLAP_NUM = TOP_K;
+//	public static double[] lowerBounds = { 0.0, 0.0, 0.0, 0.0, 0.0 };
+//	public static double[] upperBounds = { 1000.0, 1000.0, 1000.0, 1000.0, 1000.0 };
+//	public static boolean hasBoundary = true;
 
-	// public final static String DB_NAME_D2 = "";
-	// public final static String DB_NAME_SOURCE = "../data-experiment/glass-data/glass/glasses-0.8";
-	// public final static String DB_NAME_TARGET = "../data-experiment/glass-data/glass/glasses_test";
-	// public final static int TOP_K = 10;
-	// public final static int DIMENSION = 4;
-	// public static final int OVERLAP_NUM = 5;
-	// public static double[] lowerBounds = { 40, 10, 9, 115 };
-	// public static double[] upperBounds = { 64, 49, 24, 155 };
-	// public static boolean hasBoundary = true;
+	public final static String DB_NAME_D2 = "";
+	public final static String DB_NAME_SOURCE = "../data-experiment/glass-data/glass/glasses";
+	public final static String DB_NAME_TARGET = "../data-experiment/glass-data/glass/glasses_test";
+	public final static int TOP_K = 10;
+	public final static int DIMENSION = 4;
+	public static final int OVERLAP_NUM = 5;
+	public static double[] lowerBounds = { 40, 10, 9, 115 };
+	public static double[] upperBounds = { 64, 49, 24, 155 };
+	public static boolean hasBoundary = true;
 
 	public static void main(String[] args) {
 		Main.debug = false;

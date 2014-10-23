@@ -86,7 +86,6 @@ public class Point {
 		for (int i = 0; i < dimension; i++) {
 			distance += (v[i] - another.v[i]) * (v[i] - another.v[i]);
 		}
-
 		return (double) Math.sqrt(distance);
 	}
 
@@ -109,5 +108,14 @@ public class Point {
 			return false;
 		}
 		return true;
+	}
+
+	public int compareTo(Point other) {
+		for (int i = 0; i < dimension; i++) {
+			if (v[i] < other.getValueOfADimension(i)) {
+				return -1;
+			}
+		}
+		return 0;
 	}
 }

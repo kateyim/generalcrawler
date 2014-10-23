@@ -20,11 +20,7 @@ public abstract class Strategy {
 	public static int rectangleId;
 
 	public void callCrawling() {
-		long before = System.currentTimeMillis();
-		logger.info("Start at : " + before);
-
 		DSpace dSpace = prepareData();
-
 		crawl(dSpace);
 		// for debugging
 		// checkUncrawledPoints();
@@ -38,9 +34,6 @@ public abstract class Strategy {
 		//
 		endData();
 		/**************************************************************************/
-		long after = System.currentTimeMillis();
-		logger.info("Stop at: " + after);
-		logger.info("time for crawling = " + (after - before) / 1000 + "s");
 		//
 		logger.info("countNumQueries = " + countNumQueries);
 		logger.info("number of points crawled = " + dbInMemory.poisIDs.size());
